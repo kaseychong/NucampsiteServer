@@ -10,6 +10,7 @@ campsiteRouter.use(bodyParser.json());
 campsiteRouter.route('/') //path /campsites will be in the server.js file
 .get((req, res, next) => {
     Campsite.find()
+    .populate('comments.author')
     .then(campsites => {
         res.statusCode = 200;
         res.setHeader('Contect-Type', 'application/json');
@@ -44,6 +45,7 @@ campsiteRouter.route('/') //path /campsites will be in the server.js file
 campsiteRouter.route('/:campsiteId')
 .get((req, res, next) => {
     Campsite.findById(req.params.campsiteId)
+    .populate('comments.author')
     .then(campsite => {
         res.statusCode = 200;
         res.setHeader('Contect-Type', 'application/json');
@@ -79,6 +81,7 @@ campsiteRouter.route('/:campsiteId')
 campsiteRouter.route('/:campsiteId/comments') //path /campsites will be in the server.js file
 .get((req, res, next) => {
     Campsite.findById(req.params.campsiteId)
+    .populate('comments.author')
     .then(campsite => {
         if (campsite) {
         res.statusCode = 200;
@@ -96,6 +99,7 @@ campsiteRouter.route('/:campsiteId/comments') //path /campsites will be in the s
     Campsite.findById(req.params.campsiteId)
     .then(campsite => {
         if (campsite) {
+            req.body.author = req.user._id;
             campsite.comments.push(req.body);
             campsite.save()
             .then(campsite => {
@@ -146,6 +150,7 @@ campsiteRouter.route('/:campsiteId/comments') //path /campsites will be in the s
 campsiteRouter.route('/:campsiteId/comments/:commentId')
 .get((req, res, next) => {
     Campsite.findById(req.params.campsiteId)
+    .populate('comments.author')
     .then(campsite => {
         if (campsite && campsite.comments.id(req.params.commentId)) {
             res.statusCode = 200;
